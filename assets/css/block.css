@@ -1,0 +1,68 @@
+/* Content Card Block Styles */
+
+.wp-block-content-card-card {
+    max-width: 400px;
+    margin: 20px auto;
+}
+
+.content-card-block-preview {
+    border: 2px dashed #ddd;
+    padding: 20px;
+    text-align: center;
+    background: #f9f9f9;
+    border-radius: 8px;
+    margin: 10px 0;
+}
+
+.content-card-block-preview h4 {
+    margin: 0 0 10px 0;
+    color: #666;
+}
+
+.content-card-block-preview p {
+    margin: 0;
+    color: #888;
+    font-style: italic;
+}
+
+/* Block Editor Inspector Controls */
+.content-card-inspector-controls .components-panel__body {
+    border-bottom: 1px solid #e2e4e7;
+}
+
+.content-card-inspector-controls .components-base-control {
+    margin-bottom: 16px;
+}
+
+.content-card-inspector-controls .components-base-control__label {
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.content-card-group-select {
+    margin-top: 8px;
+}
+
+.content-card-group-select .components-checkbox-control {
+    margin-bottom: 8px;
+}
+
+/* Media upload button styling */
+.content-card-media-upload {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.content-card-image-preview {
+    max-width: 100%;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.content-card-remove-image {
+    align-self: flex-start;
+    margin-top: 8px;
+}

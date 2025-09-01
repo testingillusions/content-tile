@@ -1,0 +1,131 @@
+# **Content Tile Plugin Specification**
+
+## **1.0 Overview**
+
+The Content Tile plugin is a lightweight WordPress plugin designed to render a visually appealing, customizable content card. It leverages a shortcode \[content\_card\] to allow site administrators and content creators to easily embed a styled card on any page or post. The key feature of this plugin is its conditional display of an overlay, which can be used to restrict access to the card's content based on user access groups managed by the SureMembers plugin.
+
+## **2.0 Features**
+
+### **2.1 Core Functionality**
+
+* **Shortcode:** Implements a single shortcode \[content\_card\] to embed the card.  
+* **Card Rendering:** Generates a styled HTML card that includes a main title, a hero image, and a customizable list of links.  
+* **Conditional Overlay:** Displays a semi-transparent overlay with customizable call-to-action buttons if the user does not have access.
+
+### **2.2 SureMembers Integration**
+
+* **Access Control:** The plugin integrates with the SureMembers plugin to check if the currently logged-in user has access to a specific content group.  
+* **Group Filtering:** Access is controlled via a comma-separated list of SureMembers group IDs provided as a shortcode attribute.
+
+## **3.0 Technical Specifications**
+
+### **3.1 WordPress Compatibility**
+
+* **Minimum WordPress Version:** WordPress 5.0 or later.  
+* **PHP Version:** PHP 7.4 or later.
+
+### **3.2 Dependencies**
+
+* **SureMembers Plugin:** The plugin relies on the SureMembers\\\\Inc\\\\Access\_Groups class to check user permissions. The access control features will not work if the SureMembers plugin is not active.
+
+### **3.3 Shortcode Attributes**
+
+The \[content\_card\] shortcode accepts the following attributes for customization:
+
+| Attribute | Description | Default Value | Example Usage |
+| :---- | :---- | :---- | :---- |
+| access\_group\_ids | Comma-separated list of SureMembers group IDs. If the user is not in one of these groups, the overlay will be displayed. Leave empty to allow full access. | '' | \[content\_card access\_group\_ids="2,5,7"\] |
+| title | The main title of the content card. | Content Card Title | \[content\_card title="My Custom Card"\] |
+| image | The URL for the hero image displayed on the card. | https://testingillusions.com/wp-content/uploads/2025/08/compare-643305\_640\_1.png | \[pct\_card image=".../my-image.jpg"\] |
+| tool\_url | The URL for the main "Plan Comparison Tool" link. | \# | \[pct\_card tool\_url="/the-tool"\] |
+| faq\_url | The URL for the "PCT FAQ" link. | \# | \[pct\_card faq\_url="/faq"\] |
+| hints\_url | The URL for the "PCT Helpful Hints" link. | \# | \[pct\_card hints\_url="/hints"\] |
+| upgrade\_text | The text for the main call-to-action button in the overlay. | Upgrade Now for Access | \[pct\_card upgrade\_text="Get Access"\] |
+| upgrade\_url | The URL for the upgrade button in the overlay. | \# | \[pct\_card upgrade\_url="/upgrade-page"\] |
+| demo\_text | The text for the secondary call-to-action button in the overlay. | Schedule Demo | \[pct\_card demo\_text="Request Demo"\] |
+| demo\_url | The URL for the demo button in the overlay. | \# | \[pct\_card demo\_url="/demo-form"\] |
+
+### **3.4 File Structure**
+
+* pct-card-shortcode.php: The single plugin file containing all shortcode logic, CSS styling, and function calls.
+
+### **3.5 Styling and Accessibility**
+
+* **CSS:** All styling is contained within a \<style\> block and is enqueued as inline CSS to the page header, ensuring the plugin's styles are scoped to the card.  
+* **Accessibility:** The plugin utilizes aria-label and aria-hidden attributes to improve accessibility for screen readers.
+
+## **4.0 Installation and Usage**
+
+### **4.1 Installation**
+
+1. Upload the pct-card-shortcode.php file to your WordPress plugin directory (wp-content/plugins/).  
+2. Navigate to the WordPress admin panel, go to Plugins \> Installed Plugins, and activate the "PCT Card Shortcode" plugin.
+
+### **4.2 Usage**
+
+1. Open any page or post in the WordPress editor.  
+2. Add the \[pct\_card\] shortcode to the content.  
+3. Customize the card's appearance and functionality by adding attributes, such as:  
+   \[pct\_card  
+     title="My Custom Plan"  
+     access\_group\_ids="1,2"  
+     image="\[https://example.com/my-image.jpg\](https://example.com/my-image.jpg)"  
+     upgrade\_text="Buy Now"  
+   \]
+
+## **5.0 Requirements and Design Specifications**
+
+### **5.1 Block Editor Integration**
+
+#### **5.1.1 Block Registration**
+
+A new Gutenberg block named "Content Card" will be registered using the WordPress Block API. The block will be made available in the "Design" or a new "Content Cards" category within the Block Editor.
+
+#### **5.1.2 Block Editor UI**
+
+The block will have a user-friendly interface within the block editor sidebar (Inspector Controls) to configure the card's attributes. This will replace the need for manual shortcode attribute entry. The controls will include:
+
+* **Text Input:** For the title, link\_text, upgrade\_text, and demo\_text attributes.  
+* **URL Input:** For the image, link\_url, upgrade\_url, and demo\_url attributes, with a media uploader for the image.  
+* **Select/Dropdown:** For the image\_scaling attribute (cover, contain).  
+* **Tag Input/Multi-select:** To select access\_group\_ids from a list of available SureMembers groups.
+
+#### **5.1.3 Real-time Preview**
+
+The block will provide a real-time visual preview of the card as the user customizes the settings. This preview will accurately reflect all styling and attribute changes.
+
+### **5.2 Admin Settings Page**
+
+#### **5.2.1 Settings Page Registration**
+
+A new submenu page under the main "Settings" menu will be registered for the plugin. This page will be accessible at wp-admin/options-general.php?page=content-card-settings.
+
+#### **5.2.2 Default Attributes**
+
+The settings page will allow administrators to set the default values for the shortcode and block attributes. These values will be used as a fallback if the user does not specify an attribute. This includes:
+
+* Default title  
+* Default image URL  
+* Default upgrade\_text and upgrade\_url  
+* Default demo\_text and demo\_url  
+* Default link attributes (link1\_text, link1\_url, etc.)
+
+#### **5.2.3 Customization Options**
+
+The settings page will include a section for general styling options to maintain brand consistency. These options will control the CSS variables used in the card's styling.
+
+* **Color Pickers:** For the accent, border, and bg colors.  
+* **Slider/Number Input:** For the radius (border-radius).  
+* **Text Input:** For custom fonts.
+
+### **5.3 File Structure**
+
+The file structure for these enhancements will become more complex and will include:
+
+* content-card-shortcode.php: Main plugin file for bootstrapping.  
+* includes/class-content-card.php: Class to handle shortcode registration and rendering.  
+* admin/class-content-card-admin.php: Class for creating the admin settings page.  
+* admin/settings-page.php: HTML and form handling for the settings page.  
+* assets/js/block.js: JavaScript for the Gutenberg block.  
+* assets/css/block.css: Styles for the Gutenberg block.  
+* assets/css/style.css: Main stylesheet for the card on the front end.
