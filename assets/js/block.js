@@ -7,7 +7,8 @@
         SelectControl, 
         CheckboxControl,
         Button,
-        ResponsiveWrapper
+        ResponsiveWrapper,
+        Notice
     } = wp.components;
     const { MediaUpload, MediaUploadCheck } = wp.blockEditor;
     const { useState, useEffect } = wp.element;
@@ -97,6 +98,47 @@
                 demoText,
                 demoUrl
             } = attributes;
+
+            // Helper function to render group checkboxes
+            const renderGroupCheckboxes = () => {
+                const groups = contentCardData?.sureMembers?.groups || {};
+                const isAvailable = contentCardData?.sureMembers?.available || false;
+                
+                if (!isAvailable) {
+                    return wp.element.createElement(Notice, {
+                        status: 'warning',
+                        isDismissible: false
+                    }, __('SureMembers plugin not detected. Access control will not work.', 'content-card-shortcode'));
+                }
+                
+                if (Object.keys(groups).length === 0) {
+                    return wp.element.createElement(Notice, {
+                        status: 'info',
+                        isDismissible: false
+                    }, __('No access groups found. Create some access groups in SureMembers first.', 'content-card-shortcode'));
+                }
+                
+                const selectedGroups = accessGroupIds ? accessGroupIds.split(',').map(id => id.trim()) : [];
+                
+                return Object.entries(groups).map(([id, name]) => 
+                    wp.element.createElement(CheckboxControl, {
+                        key: id,
+                        label: name,
+                        checked: selectedGroups.includes(id),
+                        onChange: (checked) => {
+                            let newSelectedGroups = [...selectedGroups];
+                            if (checked) {
+                                if (!newSelectedGroups.includes(id)) {
+                                    newSelectedGroups.push(id);
+                                }
+                            } else {
+                                newSelectedGroups = newSelectedGroups.filter(groupId => groupId !== id);
+                            }
+                            setAttributes({ accessGroupIds: newSelectedGroups.join(',') });
+                        }
+                    })
+                );
+            };
 
             return [
                 wp.element.createElement(InspectorControls, {},
@@ -195,12 +237,28 @@
                         title: __('Access Control', 'content-card-shortcode'),
                         initialOpen: false
                     },
-                        wp.element.createElement(TextControl, {
-                            label: __('Access Group IDs', 'content-card-shortcode'),
-                            help: __('Comma-separated list of SureMembers group IDs. Leave empty for public access.', 'content-card-shortcode'),
-                            value: accessGroupIds,
-                            onChange: (value) => setAttributes({ accessGroupIds: value })
-                        }),
+                        wp.element.createElement('div', {
+                            style: { marginBottom: '16px' }
+                        },
+                            wp.element.createElement('label', {
+                                style: { 
+                                    display: 'block', 
+                                    marginBottom: '8px', 
+                                    fontWeight: '600',
+                                    fontSize: '11px',
+                                    textTransform: 'uppercase',
+                                    color: '#1e1e1e'
+                                }
+                            }, __('Access Groups', 'content-card-shortcode')),
+                            wp.element.createElement('p', {
+                                style: { 
+                                    fontSize: '12px', 
+                                    color: '#757575', 
+                                    margin: '0 0 12px 0' 
+                                }
+                            }, __('Select which SureMembers access groups can view this content. Leave empty for public access.', 'content-card-shortcode')),
+                            ...renderGroupCheckboxes()
+                        ),
                         wp.element.createElement(TextControl, {
                             label: __('Upgrade Button Text', 'content-card-shortcode'),
                             value: upgradeText,
@@ -260,7 +318,7 @@
                                 fontSize: '11px',
                                 color: '#666'
                             } 
-                        }, '🔒 Access restricted to groups: ' + accessGroupIds)
+                        }, '🔒 Access restricted to ' + (accessGroupIds.split(',').length === 1 ? '1 group' : accessGroupIds.split(',').length + ' groups'))
                     )
                 )
             ];

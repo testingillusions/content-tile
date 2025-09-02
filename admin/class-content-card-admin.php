@@ -15,6 +15,7 @@ class Content_Card_Admin {
     public function __construct() {
         add_action('admin_menu', array($this, 'add_admin_menu'));
         add_action('admin_init', array($this, 'init_settings'));
+        add_action('wp_ajax_get_suremembers_groups', array($this, 'ajax_get_suremembers_groups'));
     }
     
     /**
@@ -160,14 +161,27 @@ class Content_Card_Admin {
         
         if (class_exists('SureMembers\\Inc\\Access_Groups')) {
             try {
-                // This would need to be implemented based on SureMembers API
-                // For now, return empty array
-                $groups = array();
+                // Get active access groups using SureMembers API
+                $groups = SureMembers\Inc\Access_Groups::get_active();
             } catch (Exception $e) {
                 // Handle error gracefully
             }
         }
         
         return $groups;
+    }
+    
+    /**
+     * AJAX handler to get SureMembers groups
+     */
+    public function ajax_get_suremembers_groups() {
+        // Verify nonce for security
+        if (!wp_verify_nonce($_POST['nonce'], 'content_card_groups_nonce')) {
+            wp_die('Security check failed');
+        }
+        
+        $groups = $this->get_sure_members_groups();
+        
+        wp_send_json_success($groups);
     }
 }

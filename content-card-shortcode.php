@@ -73,6 +73,16 @@ register_deactivation_hook(__FILE__, 'content_card_deactivate');
  * Block initialization
  */
 function content_card_register_block() {
+    // Get SureMembers groups if available
+    $groups = array();
+    if (class_exists('SureMembers\\Inc\\Access_Groups')) {
+        try {
+            $groups = SureMembers\Inc\Access_Groups::get_active();
+        } catch (Exception $e) {
+            // Handle error gracefully
+        }
+    }
+    
     // Register the block
     wp_register_script(
         'content-card-block',
@@ -80,6 +90,16 @@ function content_card_register_block() {
         array('wp-blocks', 'wp-element', 'wp-editor', 'wp-components', 'wp-i18n'),
         CONTENT_CARD_VERSION
     );
+    
+    // Localize script with groups data
+    wp_localize_script('content-card-block', 'contentCardData', array(
+        'sureMembers' => array(
+            'groups' => $groups,
+            'available' => class_exists('SureMembers\\Inc\\Access_Groups')
+        ),
+        'ajaxUrl' => admin_url('admin-ajax.php'),
+        'nonce' => wp_create_nonce('content_card_groups_nonce')
+    ));
 
     wp_register_style(
         'content-card-block-style',
