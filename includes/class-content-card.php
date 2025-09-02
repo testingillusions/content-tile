@@ -141,33 +141,21 @@ class Content_Card {
         // Parse group IDs
         $group_ids = array_map('trim', explode(',', $group_ids_string));
         $group_ids = array_filter($group_ids, 'is_numeric');
+        $group_ids = array_map('intval', $group_ids);
         
         if (empty($group_ids)) {
             return true;
         }
         
-        // Get current user ID
-        $user_id = get_current_user_id();
-        
-        if (!$user_id) {
-            return false; // Not logged in
-        }
-        
         // Check access using SureMembers
         try {
-            $access_groups = new SureMembers\Inc\Access_Groups();
-            
-            foreach ($group_ids as $group_id) {
-                if ($access_groups->user_has_access($user_id, intval($group_id))) {
-                    return true;
-                }
-            }
+            // Use SureMembers static method to check user access
+            // This method handles user login check and access group validation internally
+            return SureMembers\Inc\Access_Groups::check_if_user_has_access($group_ids);
         } catch (Exception $e) {
             // If there's an error with SureMembers, allow access by default
             return true;
         }
-        
-        return false;
     }
     
     /**
