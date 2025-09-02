@@ -36,9 +36,6 @@ class Content_Card {
             'title' => $settings['default_title'] ?? 'Content Card Title',
             'image' => $settings['default_image'] ?? 'https://testingillusions.com/wp-content/uploads/2025/08/compare-643305_640_1.png',
             'image_scaling' => 'cover',
-            'tool_url' => $settings['default_tool_url'] ?? '#',
-            'faq_url' => $settings['default_faq_url'] ?? '#',
-            'hints_url' => $settings['default_hints_url'] ?? '#',
             'link1_text' => 'Plan Comparison Tool',
             'link1_url' => '',
             'link2_text' => 'PCT FAQ',
@@ -50,17 +47,6 @@ class Content_Card {
             'demo_text' => $settings['default_demo_text'] ?? 'Schedule Demo',
             'demo_url' => $settings['default_demo_url'] ?? '#'
         ), $atts);
-        
-        // Set default link URLs if not specified
-        if (empty($atts['link1_url'])) {
-            $atts['link1_url'] = $atts['tool_url'];
-        }
-        if (empty($atts['link2_url'])) {
-            $atts['link2_url'] = $atts['faq_url'];
-        }
-        if (empty($atts['link3_url'])) {
-            $atts['link3_url'] = $atts['hints_url'];
-        }
         
         // Check user access
         $has_access = $this->check_user_access($atts['access_group_ids']);

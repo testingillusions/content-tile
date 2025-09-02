@@ -41,15 +41,12 @@ Search for "Content Card" in the block editor and configure using the sidebar co
 | `title` | Card title | 'Content Card Title' |
 | `image` | Hero image URL | Default image |
 | `image_scaling` | Image fit (cover/contain) | 'cover' |
-| `tool_url` | Plan Comparison Tool URL | '#' |
-| `faq_url` | FAQ URL | '#' |
-| `hints_url` | Helpful Hints URL | '#' |
 | `link1_text` | Custom link 1 text | 'Plan Comparison Tool' |
-| `link1_url` | Custom link 1 URL | Uses tool_url |
+| `link1_url` | Custom link 1 URL | '' |
 | `link2_text` | Custom link 2 text | 'PCT FAQ' |
-| `link2_url` | Custom link 2 URL | Uses faq_url |
+| `link2_url` | Custom link 2 URL | '' |
 | `link3_text` | Custom link 3 text | 'PCT Helpful Hints' |
-| `link3_url` | Custom link 3 URL | Uses hints_url |
+| `link3_url` | Custom link 3 URL | '' |
 | `upgrade_text` | Upgrade button text | 'Upgrade Now for Access' |
 | `upgrade_url` | Upgrade button URL | '#' |
 | `demo_text` | Demo button text | 'Schedule Demo' |

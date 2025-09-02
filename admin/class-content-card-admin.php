@@ -56,9 +56,6 @@ class Content_Card_Admin {
         $default_fields = array(
             'default_title' => 'Default Title',
             'default_image' => 'Default Image URL',
-            'default_tool_url' => 'Default Tool URL',
-            'default_faq_url' => 'Default FAQ URL',
-            'default_hints_url' => 'Default Hints URL',
             'default_upgrade_text' => 'Default Upgrade Button Text',
             'default_upgrade_url' => 'Default Upgrade URL',
             'default_demo_text' => 'Default Demo Button Text',

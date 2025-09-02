@@ -42,7 +42,6 @@ if (!defined('ABSPATH')) {
                         <li><strong>title:</strong> Card title</li>
                         <li><strong>image:</strong> Hero image URL</li>
                         <li><strong>image_scaling:</strong> Image fit (cover/contain)</li>
-                        <li><strong>tool_url, faq_url, hints_url:</strong> Link URLs</li>
                         <li><strong>link1_text, link1_url:</strong> Custom link 1</li>
                         <li><strong>link2_text, link2_url:</strong> Custom link 2</li>
                         <li><strong>link3_text, link3_url:</strong> Custom link 3</li>
