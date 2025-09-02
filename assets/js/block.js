@@ -98,6 +98,9 @@
                 demoText,
                 demoUrl
             } = attributes;
+            
+            // State for preview toggle (unsubscribed vs subscribed view)
+            const [showUnsubscribedView, setShowUnsubscribedView] = wp.element.useState(false);
 
             // Helper function to render group checkboxes
             const renderGroupCheckboxes = () => {
@@ -282,43 +285,331 @@
                     )
                 ),
 
-                wp.element.createElement('div', { className: 'content-card-block-preview' },
-                    wp.element.createElement('h4', {}, __('Content Card Preview', 'content-card-shortcode')),
-                    wp.element.createElement('p', {}, __('This is a preview of your content card. The actual styling will be applied on the frontend.', 'content-card-shortcode')),
+                    wp.element.createElement('div', { className: 'content-card-block-preview' },
+                        wp.element.createElement('div', {
+                            style: {
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                marginBottom: '8px',
+                                position: 'relative',
+                                zIndex: '20'
+                            }
+                        },
+                            wp.element.createElement('h4', { 
+                                style: { 
+                                    margin: '0', 
+                                    fontSize: '14px', 
+                                    color: '#666', 
+                                    fontWeight: '600' 
+                                } 
+                            }, __('Content Card Preview', 'content-card-shortcode')),
+                            
+                            // Preview toggle control
+                            accessGroupIds && wp.element.createElement('div', {
+                                style: {
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '8px',
+                                    fontSize: '12px'
+                                }
+                            },
+                                wp.element.createElement('span', {
+                                    style: {
+                                        fontSize: '11px',
+                                        color: '#666'
+                                    }
+                                }, 'Preview as:'),
+                                wp.element.createElement('button', {
+                                    type: 'button',
+                                    onClick: () => setShowUnsubscribedView(false),
+                                    style: {
+                                        padding: '4px 8px',
+                                        fontSize: '10px',
+                                        border: '1px solid #ccc',
+                                        borderRadius: '4px',
+                                        backgroundColor: !showUnsubscribedView ? '#D4A574' : 'white',
+                                        color: !showUnsubscribedView ? 'white' : '#666',
+                                        cursor: 'pointer',
+                                        fontWeight: !showUnsubscribedView ? '600' : 'normal'
+                                    }
+                                }, 'Subscribed'),
+                                wp.element.createElement('button', {
+                                    type: 'button',
+                                    onClick: () => setShowUnsubscribedView(true),
+                                    style: {
+                                        padding: '4px 8px',
+                                        fontSize: '10px',
+                                        border: '1px solid #ccc',
+                                        borderRadius: '4px',
+                                        backgroundColor: showUnsubscribedView ? '#D4A574' : 'white',
+                                        color: showUnsubscribedView ? 'white' : '#666',
+                                        cursor: 'pointer',
+                                        fontWeight: showUnsubscribedView ? '600' : 'normal'
+                                    }
+                                }, 'Unsubscribed')
+                            )
+                        ),
+                        wp.element.createElement('p', { 
+                            style: { 
+                                margin: '0 0 16px 0', 
+                                fontSize: '12px', 
+                                color: '#888', 
+                                fontStyle: 'italic' 
+                            } 
+                        }, accessGroupIds && showUnsubscribedView ? 
+                            __('Preview shows how unsubscribed users will see this content card.', 'content-card-shortcode') :
+                            __('This preview shows how your card will appear on the frontend.', 'content-card-shortcode')),
+                    
+                    // Content Card Preview - matching actual design
                     wp.element.createElement('div', { 
                         style: { 
-                            marginTop: '15px',
-                            padding: '10px',
-                            border: '1px solid #ddd',
-                            borderRadius: '4px',
-                            background: '#fff'
+                            border: '1px solid #e8e8e8',
+                            borderRadius: '16px',
+                            overflow: 'hidden',
+                            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+                            background: '#fff',
+                            maxWidth: '400px',
+                            margin: '0 auto',
+                            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
                         }
                     },
-                        wp.element.createElement('h5', { style: { margin: '0 0 10px 0' } }, title || 'Content Card Title'),
-                        image && wp.element.createElement('div', {
+                        // Title spanning full width
+                        wp.element.createElement('div', {
                             style: {
-                                width: '100%',
-                                height: '100px',
-                                background: `url(${image}) center/cover`,
-                                borderRadius: '4px',
-                                marginBottom: '10px'
+                                fontSize: '18px',
+                                fontWeight: '700',
+                                color: '#D4A574',
+                                textAlign: 'center',
+                                padding: '16px 16px 12px 16px',
+                                borderBottom: '2px solid #f0f0f0',
+                                background: 'linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%)',
+                                letterSpacing: '0.5px'
                             }
-                        }),
-                        wp.element.createElement('div', {},
-                            link1Text && wp.element.createElement('div', { style: { margin: '5px 0', fontSize: '12px' } }, '📎 ' + link1Text),
-                            link2Text && wp.element.createElement('div', { style: { margin: '5px 0', fontSize: '12px' } }, '📎 ' + link2Text),
-                            link3Text && wp.element.createElement('div', { style: { margin: '5px 0', fontSize: '12px' } }, '📎 ' + link3Text)
+                        }, title || 'Content Card Title'),
+                        
+                        // Body with image and content side by side
+                        wp.element.createElement('div', {
+                            style: {
+                                display: 'flex',
+                                minHeight: '200px'
+                            }
+                        },
+                            // Image section
+                            wp.element.createElement('div', {
+                                style: {
+                                    flex: '1',
+                                    background: image ? 
+                                        `url(${image}) center/cover` : 
+                                        'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+                                    position: 'relative',
+                                    minHeight: '200px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: '#888',
+                                    fontSize: '12px'
+                                }
+                            }, !image && 'Image'),
+                            
+                            // Content section with links or upgrade buttons
+                            wp.element.createElement('div', {
+                                style: {
+                                    flex: '1',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'center',
+                                    padding: '16px 0'
+                                }
+                            },
+                                // Show different content based on preview toggle
+                                (accessGroupIds && showUnsubscribedView) ? 
+                                    // Upgrade/Demo buttons for unsubscribed view
+                                    wp.element.createElement('div', {
+                                        style: {
+                                            padding: '20px',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            gap: '12px',
+                                            alignItems: 'center',
+                                            justifyContent: 'center'
+                                        }
+                                    },
+                                        wp.element.createElement('div', {
+                                            style: {
+                                                backgroundColor: '#D4A574',
+                                                color: 'white',
+                                                padding: '12px 20px',
+                                                borderRadius: '8px',
+                                                fontSize: '14px',
+                                                fontWeight: '600',
+                                                textAlign: 'center',
+                                                cursor: 'pointer',
+                                                width: '100%',
+                                                boxSizing: 'border-box'
+                                            }
+                                        }, upgradeText || 'Upgrade Now for Access'),
+                                        wp.element.createElement('div', {
+                                            style: {
+                                                border: '2px solid #D4A574',
+                                                color: '#D4A574',
+                                                backgroundColor: 'transparent',
+                                                padding: '10px 20px',
+                                                borderRadius: '8px',
+                                                fontSize: '14px',
+                                                fontWeight: '600',
+                                                textAlign: 'center',
+                                                cursor: 'pointer',
+                                                width: '100%',
+                                                boxSizing: 'border-box'
+                                            }
+                                        }, demoText || 'Schedule Demo')
+                                    ) :
+                                    // Regular links for subscribed view
+                                    wp.element.createElement('div', {},
+                                        (link1Text || 'Plan Comparison Tool') && wp.element.createElement('div', { 
+                                            style: { 
+                                                padding: '12px 20px',
+                                                borderBottom: '1px solid #f5f5f5',
+                                                fontSize: '14px',
+                                                color: '#666',
+                                                display: 'flex',
+                                                alignItems: 'center'
+                                            } 
+                                        }, 
+                                            wp.element.createElement('span', {
+                                                style: { 
+                                                    marginRight: '12px', 
+                                                    color: '#D4A574', 
+                                                    fontSize: '12px',
+                                                    opacity: '0.7'
+                                                }
+                                            }, '▶'),
+                                            link1Text || 'Plan Comparison Tool'
+                                        ),
+                                        (link2Text || 'PCT FAQ') && wp.element.createElement('div', { 
+                                            style: { 
+                                                padding: '12px 20px',
+                                                borderBottom: '1px solid #f5f5f5',
+                                                fontSize: '14px',
+                                                color: '#666',
+                                                display: 'flex',
+                                                alignItems: 'center'
+                                            } 
+                                        }, 
+                                            wp.element.createElement('span', {
+                                                style: { 
+                                                    marginRight: '12px', 
+                                                    color: '#D4A574', 
+                                                    fontSize: '12px',
+                                                    opacity: '0.7'
+                                                }
+                                            }, '▶'),
+                                            link2Text || 'PCT FAQ'
+                                        ),
+                                        (link3Text || 'PCT Helpful Hints') && wp.element.createElement('div', { 
+                                            style: { 
+                                                padding: '12px 20px',
+                                                fontSize: '14px',
+                                                color: '#666',
+                                                display: 'flex',
+                                                alignItems: 'center'
+                                            } 
+                                        }, 
+                                            wp.element.createElement('span', {
+                                                style: { 
+                                                    marginRight: '12px', 
+                                                    color: '#D4A574', 
+                                                    fontSize: '12px',
+                                                    opacity: '0.7'
+                                                }
+                                            }, '▶'),
+                                            link3Text || 'PCT Helpful Hints'
+                                        )
+                                    )
+                            )
                         ),
-                        accessGroupIds && wp.element.createElement('div', { 
+                        
+                        // Access restriction indicator - only show if preview toggle is on and groups are selected
+                        (accessGroupIds && showUnsubscribedView) && wp.element.createElement('div', { 
                             style: { 
-                                marginTop: '10px', 
-                                padding: '5px', 
-                                background: 'rgba(0,0,0,0.1)', 
-                                borderRadius: '2px',
-                                fontSize: '11px',
-                                color: '#666'
+                                position: 'absolute',
+                                top: '0',
+                                left: '0',
+                                right: '0',
+                                bottom: '0',
+                                background: 'rgba(0, 0, 0, 0.4)',
+                                backdropFilter: 'blur(2px)',
+                                borderRadius: '16px',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                zIndex: '10',
+                                padding: '20px'
                             } 
-                        }, '🔒 Access restricted to ' + (accessGroupIds.split(',').length === 1 ? '1 group' : accessGroupIds.split(',').length + ' groups'))
+                        },
+                            wp.element.createElement('div', {
+                                style: {
+                                    background: 'white',
+                                    padding: '16px 20px',
+                                    borderRadius: '12px',
+                                    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)',
+                                    textAlign: 'center',
+                                    fontSize: '12px',
+                                    color: '#333',
+                                    marginBottom: '20px'
+                                }
+                            },
+                                wp.element.createElement('div', {
+                                    style: { fontWeight: '700', marginBottom: '4px' }
+                                }, '🔒 Premium Content'),
+                                wp.element.createElement('div', {
+                                    style: { fontSize: '10px', color: '#666' }
+                                }, accessGroupIds.split(',').length === 1 ? '1 access group' : accessGroupIds.split(',').length + ' access groups')
+                            ),
+                            
+                            // Action buttons in overlay
+                            wp.element.createElement('div', {
+                                style: {
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: '12px',
+                                    width: '200px',
+                                    maxWidth: '100%'
+                                }
+                            },
+                                wp.element.createElement('div', {
+                                    style: {
+                                        backgroundColor: '#D4A574',
+                                        color: 'white',
+                                        padding: '12px 20px',
+                                        borderRadius: '8px',
+                                        fontSize: '14px',
+                                        fontWeight: '600',
+                                        textAlign: 'center',
+                                        cursor: 'pointer',
+                                        boxShadow: '0 4px 12px rgba(212, 165, 116, 0.3)',
+                                        transition: 'all 0.2s ease'
+                                    }
+                                }, upgradeText || 'Upgrade Now for Access'),
+                                wp.element.createElement('div', {
+                                    style: {
+                                        border: '2px solid white',
+                                        color: 'white',
+                                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                                        padding: '10px 20px',
+                                        borderRadius: '8px',
+                                        fontSize: '14px',
+                                        fontWeight: '600',
+                                        textAlign: 'center',
+                                        cursor: 'pointer',
+                                        backdropFilter: 'blur(10px)',
+                                        transition: 'all 0.2s ease'
+                                    }
+                                }, demoText || 'Schedule Demo')
+                            )
+                        )
                     )
                 )
             ];
