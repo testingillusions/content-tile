@@ -47,6 +47,25 @@
     margin-bottom: 8px;
 }
 
+/* Access Groups Styling */
+.components-panel__body .components-checkbox-control {
+    margin-bottom: 12px;
+}
+
+.components-panel__body .components-checkbox-control .components-checkbox-control__label {
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.components-panel__body .components-notice {
+    margin: 0 0 16px 0;
+}
+
+.components-panel__body .components-notice p {
+    margin: 0;
+    font-size: 12px;
+}
+
 /* Media upload button styling */
 .content-card-media-upload {
     display: flex;
