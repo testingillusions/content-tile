@@ -72,29 +72,31 @@ class Content_Card {
         ?>
         <div id="<?php echo esc_attr($card_id); ?>" class="content-card-container">
             <div class="content-card">
-                <div class="content-card-image">
-                    <img src="<?php echo esc_url($atts['image']); ?>" 
-                         alt="<?php echo esc_attr($atts['title']); ?>"
-                         style="object-fit: <?php echo esc_attr($atts['image_scaling']); ?>;">
-                </div>
-                <div class="content-card-content">
-                    <h3 class="content-card-title"><?php echo esc_html($atts['title']); ?></h3>
-                    <div class="content-card-links">
-                        <?php if (!empty($atts['link1_text']) && !empty($atts['link1_url'])): ?>
-                            <a href="<?php echo esc_url($atts['link1_url']); ?>" class="content-card-link">
-                                <?php echo esc_html($atts['link1_text']); ?>
-                            </a>
-                        <?php endif; ?>
-                        <?php if (!empty($atts['link2_text']) && !empty($atts['link2_url'])): ?>
-                            <a href="<?php echo esc_url($atts['link2_url']); ?>" class="content-card-link">
-                                <?php echo esc_html($atts['link2_text']); ?>
-                            </a>
-                        <?php endif; ?>
-                        <?php if (!empty($atts['link3_text']) && !empty($atts['link3_url'])): ?>
-                            <a href="<?php echo esc_url($atts['link3_url']); ?>" class="content-card-link">
-                                <?php echo esc_html($atts['link3_text']); ?>
-                            </a>
-                        <?php endif; ?>
+                <h3 class="content-card-title"><?php echo esc_html($atts['title']); ?></h3>
+                <div class="content-card-body">
+                    <div class="content-card-image">
+                        <img src="<?php echo esc_url($atts['image']); ?>" 
+                             alt="<?php echo esc_attr($atts['title']); ?>"
+                             style="object-fit: <?php echo esc_attr($atts['image_scaling']); ?>;">
+                    </div>
+                    <div class="content-card-content">
+                        <div class="content-card-links">
+                            <?php if (!empty($atts['link1_text']) && !empty($atts['link1_url'])): ?>
+                                <a href="<?php echo esc_url($atts['link1_url']); ?>" class="content-card-link">
+                                    <?php echo esc_html($atts['link1_text']); ?>
+                                </a>
+                            <?php endif; ?>
+                            <?php if (!empty($atts['link2_text']) && !empty($atts['link2_url'])): ?>
+                                <a href="<?php echo esc_url($atts['link2_url']); ?>" class="content-card-link">
+                                    <?php echo esc_html($atts['link2_text']); ?>
+                                </a>
+                            <?php endif; ?>
+                            <?php if (!empty($atts['link3_text']) && !empty($atts['link3_url'])): ?>
+                                <a href="<?php echo esc_url($atts['link3_url']); ?>" class="content-card-link">
+                                    <?php echo esc_html($atts['link3_text']); ?>
+                                </a>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </div>
                 
@@ -102,7 +104,6 @@ class Content_Card {
                 <div class="content-card-overlay" aria-label="Access required overlay">
                     <div class="content-card-overlay-content">
                         <h4>🔒 Premium Content</h4>
-                        <p>This content is available to premium members only. Upgrade your membership to unlock access to exclusive tools and resources.</p>
                         <div class="content-card-overlay-buttons">
                             <a href="<?php echo esc_url($atts['upgrade_url']); ?>" 
                                class="content-card-btn content-card-btn-primary">
@@ -188,22 +189,42 @@ class Content_Card {
         .content-card {
             background: var(--content-card-bg);
             border: 1px solid #e8e8e8;
-            border-radius: 12px;
+            border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
             position: relative;
             display: flex;
+            flex-direction: column;
             min-height: 400px;
+            max-height: 400px;
         }
         
         .content-card:hover {
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .content-card-title {
+            font-size: 1.6em;
+            font-weight: 700;
+            margin: 0;
+            color: #D4A574;
+            text-align: center;
+            padding: 20px 20px 15px 20px;
+            border-bottom: 2px solid #f0f0f0;
+            background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+            letter-spacing: 0.5px;
+        }
+        
+        .content-card-body {
+            display: flex;
+            flex: 1;
+            min-height: 0;
         }
         
         .content-card-image {
             flex: 1;
-            min-height: 400px;
             position: relative;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             overflow: hidden;
@@ -217,26 +238,16 @@ class Content_Card {
         }
         
         .content-card:hover .content-card-image img {
-            transform: scale(1.02);
+            transform: scale(1.05);
         }
         
         .content-card-content {
-            flex: 0 0 280px;
+            flex: 1;
             padding: 0;
             background: white;
             display: flex;
             flex-direction: column;
-        }
-        
-        .content-card-title {
-            font-size: 1.8em;
-            font-weight: 600;
-            margin: 0;
-            color: #D4A574;
-            text-align: center;
-            padding: 30px 20px 20px 20px;
-            border-bottom: 1px solid #f0f0f0;
-            background: #fafafa;
+            justify-content: center;
         }
         
         .content-card-links {
@@ -245,20 +256,21 @@ class Content_Card {
             gap: 0;
             flex: 1;
             padding: 20px 0;
+            justify-content: center;
         }
         
         .content-card-link {
             display: flex;
             align-items: center;
-            padding: 15px 25px;
+            padding: 18px 30px;
             background: transparent;
-            color: #555;
+            color: #666;
             text-decoration: none;
             border: none;
-            border-bottom: 1px solid #f0f0f0;
+            border-bottom: 1px solid #f5f5f5;
             text-align: left;
-            transition: all 0.2s ease;
-            font-weight: 400;
+            transition: all 0.3s ease;
+            font-weight: 500;
             font-size: 16px;
             position: relative;
         }
@@ -268,23 +280,26 @@ class Content_Card {
         }
         
         .content-card-link:before {
-            content: '›';
-            margin-right: 12px;
-            font-size: 18px;
-            color: #999;
-            transition: all 0.2s ease;
+            content: '▶';
+            margin-right: 15px;
+            font-size: 14px;
+            color: #D4A574;
+            transition: all 0.3s ease;
+            opacity: 0.7;
         }
         
         .content-card-link:hover {
-            background: #f8f9fa;
-            color: var(--content-card-accent);
+            background: linear-gradient(135deg, #f8f9fa 0%, #f0f0f0 100%);
+            color: #333;
             text-decoration: none;
-            padding-left: 30px;
+            padding-left: 35px;
+            border-left: 3px solid #D4A574;
         }
         
         .content-card-link:hover:before {
-            color: var(--content-card-accent);
-            transform: translateX(3px);
+            color: #D4A574;
+            opacity: 1;
+            transform: translateX(5px);
         }
         
         .content-card-overlay {
@@ -293,76 +308,73 @@ class Content_Card {
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(3px);
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(2px);
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 12px;
+            border-radius: 16px;
             z-index: 10;
         }
         
         .content-card-overlay-content {
             text-align: center;
             color: #333;
-            padding: 40px;
-            max-width: 400px;
+            padding: 30px 35px;
+            max-width: 500px;
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+            position: relative;
         }
         
         .content-card-overlay-content h4 {
-            font-size: 1.5em;
-            margin: 0 0 15px 0;
-            color: #333;
-            font-weight: 600;
-        }
-        
-        .content-card-overlay-content p {
+            font-size: 1.4em;
             margin: 0 0 25px 0;
-            color: #666;
-            line-height: 1.5;
-            font-size: 16px;
+            color: #333;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
         
         .content-card-overlay-buttons {
             display: flex;
-            flex-direction: column;
-            gap: 12px;
+            flex-direction: row;
+            gap: 15px;
             align-items: center;
+            justify-content: center;
         }
         
         .content-card-btn {
             display: inline-block;
-            padding: 14px 28px;
+            padding: 14px 24px;
             text-decoration: none;
-            border-radius: 8px;
+            border-radius: 12px;
             font-weight: 600;
             transition: all 0.3s ease;
-            min-width: 180px;
+            min-width: 160px;
             text-align: center;
-            font-size: 15px;
+            font-size: 14px;
             border: 2px solid transparent;
+            cursor: pointer;
         }
         
         .content-card-btn-primary {
-            background: var(--content-card-accent, #D4A574);
+            background: #333;
             color: white;
-            border-color: var(--content-card-accent, #D4A574);
+            border-color: #333;
         }
         
         .content-card-btn-primary:hover {
-            background: transparent;
-            color: var(--content-card-accent, #D4A574);
+            background: #555;
+            color: white;
             text-decoration: none;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(212, 165, 116, 0.3);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
         }
         
         .content-card-btn-secondary {
-            background: transparent;
-            color: #666;
+            background: white;
+            color: #333;
             border: 2px solid #ddd;
         }
         
@@ -371,17 +383,24 @@ class Content_Card {
             color: #333;
             text-decoration: none;
             border-color: #bbb;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
         
         @media (max-width: 768px) {
             .content-card {
-                flex-direction: column;
                 min-height: auto;
+                max-height: none;
+            }
+            
+            .content-card-body {
+                flex-direction: column;
             }
             
             .content-card-image {
                 flex: none;
-                min-height: 250px;
+                min-height: 200px;
+                max-height: 200px;
             }
             
             .content-card-content {
@@ -394,8 +413,8 @@ class Content_Card {
             }
             
             .content-card-title {
-                font-size: 1.5em;
-                padding: 20px 15px 15px 15px;
+                font-size: 1.4em;
+                padding: 15px 15px 12px 15px;
             }
             
             .content-card-links {
@@ -403,22 +422,39 @@ class Content_Card {
             }
             
             .content-card-link {
-                padding: 12px 20px;
+                padding: 15px 20px;
                 font-size: 15px;
             }
             
+            .content-card-link:hover {
+                padding-left: 25px;
+                border-left: 2px solid #D4A574;
+            }
+            
             .content-card-overlay-content {
-                padding: 30px 20px;
-                margin: 20px;
+                padding: 25px 20px;
+                margin: 15px;
+                max-width: calc(100vw - 30px);
+            }
+            
+            .content-card-overlay-buttons {
+                flex-direction: column;
+                gap: 12px;
             }
             
             .content-card-btn {
                 width: 100%;
-                padding: 12px 20px;
+                padding: 14px 20px;
+                min-width: auto;
             }
         }
         
         @media (max-width: 480px) {
+            .content-card-overlay-content {
+                padding: 20px 15px;
+                margin: 10px;
+            }
+            
             .content-card-overlay-buttons {
                 flex-direction: column;
                 gap: 10px;
@@ -427,6 +463,7 @@ class Content_Card {
             .content-card-btn {
                 font-size: 14px;
                 padding: 12px 16px;
+                width: 100%;
             }
         }
         </style>
