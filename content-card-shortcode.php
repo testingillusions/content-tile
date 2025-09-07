@@ -3,7 +3,7 @@
  * Plugin Name: Content Card Shortcode
  * Plugin URI: https://example.com/content-card-shortcode
  * Description: A lightweight WordPress plugin that renders customizable content cards with conditional overlay access control using SureMembers integration.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: Your Name
  * License: GPL v2 or later
  * Text Domain: content-card-shortcode
@@ -51,6 +51,12 @@ function content_card_activate() {
         'default_upgrade_url' => '#',
         'default_demo_text' => 'Schedule Demo',
         'default_demo_url' => '#',
+        'default_button1_text' => '',
+        'default_button1_url' => '',
+        'default_button2_text' => '',
+        'default_button2_url' => '',
+        'default_button3_text' => '',
+        'default_button3_url' => '',
         'accent_color' => '#007cba',
         'border_color' => '#ddd',
         'bg_color' => '#fff',
@@ -126,5 +132,55 @@ function content_card_enqueue_styles() {
         array(),
         CONTENT_CARD_VERSION
     );
+    
+    // Enqueue JavaScript for access state management
+    wp_enqueue_script(
+        'content-card-access',
+        CONTENT_CARD_PLUGIN_URL . 'assets/js/access-handler.js',
+        array('jquery'),
+        CONTENT_CARD_VERSION,
+        true
+    );
+    
+    // Localize script with AJAX data
+    wp_localize_script('content-card-access', 'contentCardAjax', array(
+        'ajaxUrl' => admin_url('admin-ajax.php'),
+        'nonce' => wp_create_nonce('content_card_access_check'),
+        'userId' => get_current_user_id(),
+        'isLoggedIn' => is_user_logged_in()
+    ));
 }
 add_action('wp_enqueue_scripts', 'content_card_enqueue_styles');
+
+/**
+ * AJAX handler to refresh access state
+ */
+function content_card_refresh_access() {
+    // Verify nonce
+    if (!wp_verify_nonce($_POST['nonce'], 'content_card_access_check')) {
+        wp_die('Security check failed');
+    }
+    
+    $group_ids = sanitize_text_field($_POST['group_ids'] ?? '');
+    
+    if (empty($group_ids)) {
+        wp_send_json_success(array('has_access' => true));
+        return;
+    }
+    
+    // Create temporary content card instance to check access
+    $content_card = new Content_Card();
+    $reflection = new ReflectionClass($content_card);
+    $method = $reflection->getMethod('check_user_access');
+    $method->setAccessible(true);
+    
+    $has_access = $method->invoke($content_card, $group_ids);
+    
+    wp_send_json_success(array(
+        'has_access' => $has_access,
+        'user_id' => get_current_user_id(),
+        'is_logged_in' => is_user_logged_in()
+    ));
+}
+add_action('wp_ajax_content_card_refresh_access', 'content_card_refresh_access');
+add_action('wp_ajax_nopriv_content_card_refresh_access', 'content_card_refresh_access');

@@ -40,43 +40,55 @@
             },
             link1Text: {
                 type: 'string',
-                default: 'Plan Comparison Tool'
+                default: ''
             },
             link1Url: {
                 type: 'string',
-                default: '#'
+                default: ''
             },
             link2Text: {
                 type: 'string',
-                default: 'PCT FAQ'
+                default: ''
             },
             link2Url: {
                 type: 'string',
-                default: '#'
+                default: ''
             },
             link3Text: {
                 type: 'string',
-                default: 'PCT Helpful Hints'
+                default: ''
             },
             link3Url: {
                 type: 'string',
-                default: '#'
+                default: ''
             },
-            upgradeText: {
+            paragraphText: {
                 type: 'string',
-                default: 'Upgrade Now for Access'
+                default: ''
             },
-            upgradeUrl: {
+            button1Text: {
                 type: 'string',
-                default: '#'
+                default: ''
             },
-            demoText: {
+            button1Url: {
                 type: 'string',
-                default: 'Schedule Demo'
+                default: ''
             },
-            demoUrl: {
+            button2Text: {
                 type: 'string',
-                default: '#'
+                default: ''
+            },
+            button2Url: {
+                type: 'string',
+                default: ''
+            },
+            button3Text: {
+                type: 'string',
+                default: ''
+            },
+            button3Url: {
+                type: 'string',
+                default: ''
             }
         },
 
@@ -93,10 +105,13 @@
                 link2Url,
                 link3Text,
                 link3Url,
-                upgradeText,
-                upgradeUrl,
-                demoText,
-                demoUrl
+                paragraphText,
+                button1Text,
+                button1Url,
+                button2Text,
+                button2Url,
+                button3Text,
+                button3Url
             } = attributes;
             
             // State for preview toggle (unsubscribed vs subscribed view)
@@ -237,6 +252,18 @@
                     ),
                     
                     wp.element.createElement(PanelBody, {
+                        title: __('Additional Content', 'content-card-shortcode'),
+                        initialOpen: false
+                    },
+                        wp.element.createElement(TextControl, {
+                            label: __('Bottom Paragraph Text', 'content-card-shortcode'),
+                            value: paragraphText,
+                            onChange: (value) => setAttributes({ paragraphText: value }),
+                            help: __('Optional centered text displayed at the bottom of the card.', 'content-card-shortcode')
+                        })
+                    ),
+                    
+                    wp.element.createElement(PanelBody, {
                         title: __('Access Control', 'content-card-shortcode'),
                         initialOpen: false
                     },
@@ -263,24 +290,37 @@
                             ...renderGroupCheckboxes()
                         ),
                         wp.element.createElement(TextControl, {
-                            label: __('Upgrade Button Text', 'content-card-shortcode'),
-                            value: upgradeText,
-                            onChange: (value) => setAttributes({ upgradeText: value })
+                            label: __('Button 1 Text', 'content-card-shortcode'),
+                            value: button1Text,
+                            onChange: (value) => setAttributes({ button1Text: value }),
+                            help: __('Primary button (will be styled prominently)', 'content-card-shortcode')
                         }),
                         wp.element.createElement(TextControl, {
-                            label: __('Upgrade URL', 'content-card-shortcode'),
-                            value: upgradeUrl,
-                            onChange: (value) => setAttributes({ upgradeUrl: value })
+                            label: __('Button 1 URL', 'content-card-shortcode'),
+                            value: button1Url,
+                            onChange: (value) => setAttributes({ button1Url: value })
                         }),
                         wp.element.createElement(TextControl, {
-                            label: __('Demo Button Text', 'content-card-shortcode'),
-                            value: demoText,
-                            onChange: (value) => setAttributes({ demoText: value })
+                            label: __('Button 2 Text', 'content-card-shortcode'),
+                            value: button2Text,
+                            onChange: (value) => setAttributes({ button2Text: value }),
+                            help: __('Secondary button', 'content-card-shortcode')
                         }),
                         wp.element.createElement(TextControl, {
-                            label: __('Demo URL', 'content-card-shortcode'),
-                            value: demoUrl,
-                            onChange: (value) => setAttributes({ demoUrl: value })
+                            label: __('Button 2 URL', 'content-card-shortcode'),
+                            value: button2Url,
+                            onChange: (value) => setAttributes({ button2Url: value })
+                        }),
+                        wp.element.createElement(TextControl, {
+                            label: __('Button 3 Text', 'content-card-shortcode'),
+                            value: button3Text,
+                            onChange: (value) => setAttributes({ button3Text: value }),
+                            help: __('Tertiary button (subtle styling)', 'content-card-shortcode')
+                        }),
+                        wp.element.createElement(TextControl, {
+                            label: __('Button 3 URL', 'content-card-shortcode'),
+                            value: button3Url,
+                            onChange: (value) => setAttributes({ button3Url: value })
                         })
                     )
                 ),
@@ -435,39 +475,83 @@
                                             justifyContent: 'center'
                                         }
                                     },
+                                        // First two buttons in a row
                                         wp.element.createElement('div', {
                                             style: {
-                                                backgroundColor: '#D4A574',
-                                                color: 'white',
-                                                padding: '12px 20px',
-                                                borderRadius: '8px',
-                                                fontSize: '14px',
-                                                fontWeight: '600',
-                                                textAlign: 'center',
-                                                cursor: 'pointer',
+                                                display: 'flex',
+                                                gap: '12px',
                                                 width: '100%',
-                                                boxSizing: 'border-box'
+                                                justifyContent: 'center',
+                                                flexWrap: 'wrap'
                                             }
-                                        }, upgradeText || 'Upgrade Now for Access'),
-                                        wp.element.createElement('div', {
+                                        },
+                                            // Show only new button system
+                                            (button1Text && button1Url) && wp.element.createElement('div', {
+                                                style: {
+                                                    backgroundColor: '#D4A574',
+                                                    color: 'white',
+                                                    padding: '12px 16px',
+                                                    borderRadius: '8px',
+                                                    fontSize: '13px',
+                                                    fontWeight: '600',
+                                                    textAlign: 'center',
+                                                    cursor: 'pointer',
+                                                    flex: '1',
+                                                    minWidth: '120px',
+                                                    maxWidth: '140px'
+                                                }
+                                            }, button1Text),
+                                            
+                                            (button2Text && button2Url) && wp.element.createElement('div', {
+                                                style: {
+                                                    border: '2px solid #D4A574',
+                                                    color: '#D4A574',
+                                                    backgroundColor: 'transparent',
+                                                    padding: '10px 16px',
+                                                    borderRadius: '8px',
+                                                    fontSize: '13px',
+                                                    fontWeight: '600',
+                                                    textAlign: 'center',
+                                                    cursor: 'pointer',
+                                                    flex: '1',
+                                                    minWidth: '120px',
+                                                    maxWidth: '140px'
+                                                }
+                                            }, button2Text)
+                                        ),
+                                        
+                                        // Third button centered below
+                                        (button3Text && button3Url) && wp.element.createElement('div', {
                                             style: {
-                                                border: '2px solid #D4A574',
-                                                color: '#D4A574',
+                                                border: '1px solid #ccc',
+                                                color: '#666',
                                                 backgroundColor: 'transparent',
                                                 padding: '10px 20px',
                                                 borderRadius: '8px',
-                                                fontSize: '14px',
+                                                fontSize: '13px',
                                                 fontWeight: '600',
                                                 textAlign: 'center',
                                                 cursor: 'pointer',
-                                                width: '100%',
-                                                boxSizing: 'border-box'
+                                                marginTop: '8px',
+                                                maxWidth: '180px'
                                             }
-                                        }, demoText || 'Schedule Demo')
+                                        }, button3Text),
+                                        
+                                        // Show message if no buttons are configured
+                                        (!button1Text || !button1Url) && (!button2Text || !button2Url) && (!button3Text || !button3Url) && 
+                                        wp.element.createElement('div', {
+                                            style: {
+                                                padding: '20px',
+                                                textAlign: 'center',
+                                                color: '#999',
+                                                fontSize: '12px',
+                                                fontStyle: 'italic'
+                                            }
+                                        }, 'No overlay buttons configured. Add button text and URLs in the Access Control section.')
                                     ) :
                                     // Regular links for subscribed view
                                     wp.element.createElement('div', {},
-                                        (link1Text || 'Plan Comparison Tool') && wp.element.createElement('div', { 
+                                        (link1Text && link1Url) && wp.element.createElement('div', { 
                                             style: { 
                                                 padding: '12px 20px',
                                                 borderBottom: '1px solid #f5f5f5',
@@ -485,9 +569,9 @@
                                                     opacity: '0.7'
                                                 }
                                             }, '▶'),
-                                            link1Text || 'Plan Comparison Tool'
+                                            link1Text
                                         ),
-                                        (link2Text || 'PCT FAQ') && wp.element.createElement('div', { 
+                                        (link2Text && link2Url) && wp.element.createElement('div', { 
                                             style: { 
                                                 padding: '12px 20px',
                                                 borderBottom: '1px solid #f5f5f5',
@@ -505,9 +589,9 @@
                                                     opacity: '0.7'
                                                 }
                                             }, '▶'),
-                                            link2Text || 'PCT FAQ'
+                                            link2Text
                                         ),
-                                        (link3Text || 'PCT Helpful Hints') && wp.element.createElement('div', { 
+                                        (link3Text && link3Url) && wp.element.createElement('div', { 
                                             style: { 
                                                 padding: '12px 20px',
                                                 fontSize: '14px',
@@ -524,10 +608,43 @@
                                                     opacity: '0.7'
                                                 }
                                             }, '▶'),
-                                            link3Text || 'PCT Helpful Hints'
-                                        )
+                                            link3Text
+                                        ),
+                                        
+                                        // Show message if no links are configured
+                                        (!link1Text || !link1Url) && (!link2Text || !link2Url) && (!link3Text || !link3Url) && 
+                                        wp.element.createElement('div', {
+                                            style: {
+                                                padding: '20px',
+                                                textAlign: 'center',
+                                                color: '#999',
+                                                fontSize: '12px',
+                                                fontStyle: 'italic'
+                                            }
+                                        }, 'No links configured. Add link text and URLs in the sidebar.')
                                     )
                             )
+                        ),
+                        
+                        // Paragraph section at the bottom
+                        paragraphText && wp.element.createElement('div', {
+                            style: {
+                                padding: '15px 20px',
+                                background: '#f9f9f9',
+                                borderTop: '1px solid #e8e8e8',
+                                textAlign: 'center'
+                            }
+                        },
+                            wp.element.createElement('p', {
+                                style: {
+                                    margin: '0',
+                                    color: '#666',
+                                    fontSize: '14px',
+                                    lineHeight: '1.5',
+                                    fontStyle: 'italic',
+                                    fontWeight: 'bold'
+                                }
+                            }, paragraphText)
                         ),
                         
                         // Access restriction indicator - only show if preview toggle is on and groups are selected
@@ -573,41 +690,80 @@
                             wp.element.createElement('div', {
                                 style: {
                                     display: 'flex',
-                                    flexDirection: 'column',
+                                    flexWrap: 'wrap',
                                     gap: '12px',
-                                    width: '200px',
-                                    maxWidth: '100%'
+                                    width: '280px',
+                                    maxWidth: '100%',
+                                    justifyContent: 'center'
                                 }
                             },
+                                // First two buttons in a row
                                 wp.element.createElement('div', {
                                     style: {
-                                        backgroundColor: '#D4A574',
-                                        color: 'white',
-                                        padding: '12px 20px',
-                                        borderRadius: '8px',
-                                        fontSize: '14px',
-                                        fontWeight: '600',
-                                        textAlign: 'center',
-                                        cursor: 'pointer',
-                                        boxShadow: '0 4px 12px rgba(212, 165, 116, 0.3)',
-                                        transition: 'all 0.2s ease'
+                                        display: 'flex',
+                                        gap: '12px',
+                                        width: '100%',
+                                        justifyContent: 'center'
                                     }
-                                }, upgradeText || 'Upgrade Now for Access'),
-                                wp.element.createElement('div', {
+                                },
+                                    // Show only new button system
+                                    (button1Text && button1Url) && wp.element.createElement('div', {
+                                        style: {
+                                            backgroundColor: '#D4A574',
+                                            color: 'white',
+                                            padding: '12px 16px',
+                                            borderRadius: '8px',
+                                            fontSize: '13px',
+                                            fontWeight: '600',
+                                            textAlign: 'center',
+                                            cursor: 'pointer',
+                                            boxShadow: '0 4px 12px rgba(212, 165, 116, 0.3)',
+                                            transition: 'all 0.2s ease',
+                                            flex: '1',
+                                            minWidth: '120px',
+                                            maxWidth: '140px'
+                                        }
+                                    }, button1Text),
+                                    
+                                    (button2Text && button2Url) && wp.element.createElement('div', {
+                                        style: {
+                                            border: '2px solid white',
+                                            color: 'white',
+                                            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                                            padding: '10px 16px',
+                                            borderRadius: '8px',
+                                            fontSize: '13px',
+                                            fontWeight: '600',
+                                            textAlign: 'center',
+                                            cursor: 'pointer',
+                                            backdropFilter: 'blur(10px)',
+                                            transition: 'all 0.2s ease',
+                                            flex: '1',
+                                            minWidth: '120px',
+                                            maxWidth: '140px'
+                                        }
+                                    }, button2Text)
+                                ),
+                                
+                                // Third button centered below
+                                (button3Text && button3Url) && wp.element.createElement('div', {
                                     style: {
-                                        border: '2px solid white',
+                                        border: '1px solid rgba(255, 255, 255, 0.5)',
                                         color: 'white',
-                                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                                        backgroundColor: 'rgba(255, 255, 255, 0.05)',
                                         padding: '10px 20px',
                                         borderRadius: '8px',
-                                        fontSize: '14px',
+                                        fontSize: '13px',
                                         fontWeight: '600',
                                         textAlign: 'center',
                                         cursor: 'pointer',
                                         backdropFilter: 'blur(10px)',
-                                        transition: 'all 0.2s ease'
+                                        transition: 'all 0.2s ease',
+                                        marginTop: '8px',
+                                        maxWidth: '180px',
+                                        width: '100%'
                                     }
-                                }, demoText || 'Schedule Demo')
+                                }, button3Text)
                             )
                         )
                     )

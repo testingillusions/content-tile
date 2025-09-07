@@ -29,8 +29,15 @@ if (!defined('ABSPATH')) {
   title="My Custom Card"
   access_group_ids="1,2,3"
   image="https://example.com/image.jpg"
-  upgrade_text="Get Access"
-  upgrade_url="/upgrade"
+  link1_text="First Link"
+  link1_url="/link1"
+  link2_text="Second Link"
+  link2_url="/link2"
+  paragraph_text="Compare 2-4 plans side-by-side"
+  button1_text="Get Access"
+  button1_url="/upgrade"
+  button2_text="Learn More"
+  button2_url="/demo"
 ]</code></pre>
                     
                     <h4>Gutenberg Block</h4>
@@ -45,8 +52,10 @@ if (!defined('ABSPATH')) {
                         <li><strong>link1_text, link1_url:</strong> Custom link 1</li>
                         <li><strong>link2_text, link2_url:</strong> Custom link 2</li>
                         <li><strong>link3_text, link3_url:</strong> Custom link 3</li>
-                        <li><strong>upgrade_text, upgrade_url:</strong> Primary CTA</li>
-                        <li><strong>demo_text, demo_url:</strong> Secondary CTA</li>
+                        <li><strong>paragraph_text:</strong> Bottom paragraph text (centered)</li>
+                        <li><strong>button1_text, button1_url:</strong> Primary overlay button</li>
+                        <li><strong>button2_text, button2_url:</strong> Secondary overlay button</li>
+                        <li><strong>button3_text, button3_url:</strong> Tertiary overlay button</li>
                     </ul>
                 </div>
             </div>
