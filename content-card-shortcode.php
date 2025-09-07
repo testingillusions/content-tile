@@ -3,8 +3,8 @@
  * Plugin Name: Content Card Shortcode
  * Plugin URI: https://example.com/content-card-shortcode
  * Description: A lightweight WordPress plugin that renders customizable content cards with conditional overlay access control using SureMembers integration.
- * Version: 1.0.1
- * Author: Your Name
+ * Version: 1.0.2
+ * Author: Joe Wood
  * License: GPL v2 or later
  * Text Domain: content-card-shortcode
  * Requires at least: 5.0
