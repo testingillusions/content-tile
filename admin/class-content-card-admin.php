@@ -57,10 +57,12 @@ class Content_Card_Admin {
         $default_fields = array(
             'default_title' => 'Default Title',
             'default_image' => 'Default Image URL',
-            'default_upgrade_text' => 'Default Upgrade Button Text',
-            'default_upgrade_url' => 'Default Upgrade URL',
-            'default_demo_text' => 'Default Demo Button Text',
-            'default_demo_url' => 'Default Demo URL'
+            'default_button1_text' => 'Default Button 1 Text',
+            'default_button1_url' => 'Default Button 1 URL',
+            'default_button2_text' => 'Default Button 2 Text',
+            'default_button2_url' => 'Default Button 2 URL',
+            'default_button3_text' => 'Default Button 3 Text',
+            'default_button3_url' => 'Default Button 3 URL'
         );
         
         foreach ($default_fields as $field_id => $field_title) {

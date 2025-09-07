@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Card Test</title>
+</head>
+<body>
+    <h1>Content Card Plugin Test</h1>
+    
+    <h2>Example Shortcodes</h2>
+    
+    <h3>1. Basic card with links only (no access restriction)</h3>
+    <pre>[content_card 
+  title="Plan Comparison Tool" 
+  link1_text="Plan Comparison Tool" 
+  link1_url="/plans"
+  link2_text="PCT FAQ" 
+  link2_url="/faq"
+  link3_text="PCT Helpful Hints" 
+  link3_url="/hints"
+  paragraph_text="Compare 2-4 plans side-by-side with our interactive Medical Plan Comparison Tool"
+]</pre>
+    
+    <h3>2. Card with new button system (access restricted)</h3>
+    <pre>[content_card 
+  title="Premium Content" 
+  access_group_ids="1,2"
+  link1_text="Resource 1" 
+  link1_url="/resource1"
+  link2_text="Resource 2" 
+  link2_url="/resource2"
+  paragraph_text="Access premium content with your subscription"
+  button1_text="Upgrade Now" 
+  button1_url="/upgrade"
+  button2_text="Schedule Demo" 
+  button2_url="/demo"
+  button3_text="Learn More"
+  button3_url="/info"
+]</pre>
+    
+    <h3>3. Card with empty links (should show blank links)</h3>
+    <pre>[content_card 
+  title="Minimal Card" 
+  link1_text="Available Link" 
+  link1_url="/available"
+  link2_text="" 
+  link2_url=""
+  link3_text="Another Link" 
+  link3_url=""
+  paragraph_text="This card shows proper handling of empty links"
+]</pre>
+    
+    <h3>4. Legacy compatibility test</h3>
+    <pre>[content_card 
+  title="Legacy Card" 
+  access_group_ids="1"
+  upgrade_text="Old Upgrade Button" 
+  upgrade_url="/legacy-upgrade"
+  demo_text="Old Demo Button" 
+  demo_url="/legacy-demo"
+]</pre>
+
+    <h2>Key Features Implemented:</h2>
+    <ul>
+        <li>✅ Links only display when both text AND URL are provided</li>
+        <li>✅ Added paragraph section at bottom with centered text</li>
+        <li>✅ Up to 3 overlay buttons with different styling</li>
+        <li>✅ Buttons only display when both text AND URL are provided</li>
+        <li>✅ Backward compatibility with legacy upgrade/demo buttons</li>
+        <li>✅ New button system takes precedence over legacy system</li>
+    </ul>
+</body>
+</html>
