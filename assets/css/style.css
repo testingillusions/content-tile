@@ -16,7 +16,7 @@
     transition: all 0.3s ease;
     position: relative;
     display: flex;
-    min-height: 400px;
+    min-height: 200px;
 }
 
 .content-card:hover {
