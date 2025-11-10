@@ -76,6 +76,16 @@ class Content_Card_Admin {
             );
         }
         
+        // Add checkbox for "open in new tab" setting
+        add_settings_field(
+            'default_open_in_new_tab',
+            'Open Links in New Tab',
+            array($this, 'render_checkbox_field'),
+            'content-card-settings',
+            'content_card_defaults',
+            array('field_id' => 'default_open_in_new_tab')
+        );
+        
         // Styling fields
         $styling_fields = array(
             'accent_color' => 'Accent Color',
@@ -153,6 +163,22 @@ class Content_Card_Admin {
         $value = $settings[$field_id] ?? '8';
         
         echo '<input type="number" name="content_card_settings[' . esc_attr($field_id) . ']" value="' . esc_attr($value) . '" min="0" max="50" />';
+    }
+    
+    /**
+     * Render checkbox field
+     */
+    public function render_checkbox_field($args) {
+        $settings = get_option('content_card_settings', array());
+        $field_id = $args['field_id'];
+        $value = $settings[$field_id] ?? 'yes';
+        $checked = ($value === 'yes') ? 'checked="checked"' : '';
+        
+        echo '<label>';
+        echo '<input type="checkbox" name="content_card_settings[' . esc_attr($field_id) . ']" value="yes" ' . $checked . ' />';
+        echo ' Open all links in new browser tabs/windows';
+        echo '</label>';
+        echo '<input type="hidden" name="content_card_settings[' . esc_attr($field_id) . ']" value="no" />';
     }
     
     /**

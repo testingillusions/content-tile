@@ -38,17 +38,24 @@ class Content_Card {
             'image_scaling' => 'cover',
             'link1_text' => '',
             'link1_url' => '',
+            'link1_new_tab' => $settings['default_open_in_new_tab'] ?? 'yes',
             'link2_text' => '',
             'link2_url' => '',
+            'link2_new_tab' => $settings['default_open_in_new_tab'] ?? 'yes',
             'link3_text' => '',
             'link3_url' => '',
+            'link3_new_tab' => $settings['default_open_in_new_tab'] ?? 'yes',
             'paragraph_text' => '',
             'button1_text' => $settings['default_button1_text'] ?? '',
             'button1_url' => $settings['default_button1_url'] ?? '',
+            'button1_new_tab' => $settings['default_open_in_new_tab'] ?? 'yes',
             'button2_text' => $settings['default_button2_text'] ?? '',
             'button2_url' => $settings['default_button2_url'] ?? '',
+            'button2_new_tab' => $settings['default_open_in_new_tab'] ?? 'yes',
             'button3_text' => $settings['default_button3_text'] ?? '',
             'button3_url' => $settings['default_button3_url'] ?? '',
+            'button3_new_tab' => $settings['default_open_in_new_tab'] ?? 'yes',
+            'open_in_new_tab' => $settings['default_open_in_new_tab'] ?? 'yes', // Keep for backward compatibility
             // Keep legacy attributes for backward compatibility
             'upgrade_text' => $settings['default_upgrade_text'] ?? '',
             'upgrade_url' => $settings['default_upgrade_url'] ?? '',
@@ -80,17 +87,17 @@ class Content_Card {
                     <div class="content-card-content">
                         <div class="content-card-links">
                             <?php if (!empty($atts['link1_text']) && !empty($atts['link1_url'])): ?>
-                                <a href="<?php echo esc_url($atts['link1_url']); ?>" class="content-card-link">
+                                <a href="<?php echo esc_url($atts['link1_url']); ?>" class="content-card-link" <?php echo $this->get_target_attr($atts['link1_new_tab']); ?>>
                                     <?php echo esc_html($atts['link1_text']); ?>
                                 </a>
                             <?php endif; ?>
                             <?php if (!empty($atts['link2_text']) && !empty($atts['link2_url'])): ?>
-                                <a href="<?php echo esc_url($atts['link2_url']); ?>" class="content-card-link">
+                                <a href="<?php echo esc_url($atts['link2_url']); ?>" class="content-card-link" <?php echo $this->get_target_attr($atts['link2_new_tab']); ?>>
                                     <?php echo esc_html($atts['link2_text']); ?>
                                 </a>
                             <?php endif; ?>
                             <?php if (!empty($atts['link3_text']) && !empty($atts['link3_url'])): ?>
-                                <a href="<?php echo esc_url($atts['link3_url']); ?>" class="content-card-link">
+                                <a href="<?php echo esc_url($atts['link3_url']); ?>" class="content-card-link" <?php echo $this->get_target_attr($atts['link3_new_tab']); ?>>
                                     <?php echo esc_html($atts['link3_text']); ?>
                                 </a>
                             <?php endif; ?>
@@ -115,19 +122,20 @@ class Content_Card {
                             
                             // Collect new button system buttons
                             if (!empty($atts['button1_text']) && !empty($atts['button1_url'])) {
-                                $buttons[] = array('text' => $atts['button1_text'], 'url' => $atts['button1_url'], 'class' => 'primary');
+                                $buttons[] = array('text' => $atts['button1_text'], 'url' => $atts['button1_url'], 'class' => 'primary', 'new_tab' => $atts['button1_new_tab']);
                             }
                             if (!empty($atts['button2_text']) && !empty($atts['button2_url'])) {
-                                $buttons[] = array('text' => $atts['button2_text'], 'url' => $atts['button2_url'], 'class' => 'secondary');
+                                $buttons[] = array('text' => $atts['button2_text'], 'url' => $atts['button2_url'], 'class' => 'secondary', 'new_tab' => $atts['button2_new_tab']);
                             }
                             if (!empty($atts['button3_text']) && !empty($atts['button3_url'])) {
-                                $buttons[] = array('text' => $atts['button3_text'], 'url' => $atts['button3_url'], 'class' => 'tertiary');
+                                $buttons[] = array('text' => $atts['button3_text'], 'url' => $atts['button3_url'], 'class' => 'tertiary', 'new_tab' => $atts['button3_new_tab']);
                             }
                             
                             // Render buttons
                             foreach ($buttons as $button): ?>
                                 <a href="<?php echo esc_url($button['url']); ?>" 
-                                   class="content-card-btn content-card-btn-<?php echo esc_attr($button['class']); ?>">
+                                   class="content-card-btn content-card-btn-<?php echo esc_attr($button['class']); ?>"
+                                   <?php echo $this->get_target_attr($button['new_tab']); ?>>
                                     <?php echo esc_html($button['text']); ?>
                                 </a>
                             <?php endforeach; ?>
@@ -296,21 +304,21 @@ class Content_Card {
         
         .content-card-body {
             display: flex;
-            flex: 1;
-            min-height: 250px;
+            flex-direction: row;
         }
         
         .content-card-image {
             flex: 1;
             position: relative;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             overflow: hidden;
+            display: flex;
+            align-items: center;
         }
         
         .content-card-image img {
             width: 100%;
-            height: 100%;
-            object-fit: cover;
+            height: auto;
+            object-fit: contain;
             transition: transform 0.3s ease;
         }
         
@@ -516,8 +524,13 @@ class Content_Card {
             
             .content-card-image {
                 flex: none;
-                min-height: 200px;
-                max-height: 200px;
+                display: block;
+            }
+            
+            .content-card-image img {
+                width: 100%;
+                height: auto;
+                object-fit: contain;
             }
             
             .content-card-content {
@@ -619,5 +632,12 @@ class Content_Card {
         }
         </style>
         <?php
+    }
+    
+    /**
+     * Helper method to generate target attribute for links
+     */
+    private function get_target_attr($new_tab) {
+        return ($new_tab === 'yes' || $new_tab === true) ? 'target="_blank" rel="noopener noreferrer"' : '';
     }
 }

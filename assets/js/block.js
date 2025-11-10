@@ -46,6 +46,10 @@
                 type: 'string',
                 default: ''
             },
+            link1NewTab: {
+                type: 'boolean',
+                default: true
+            },
             link2Text: {
                 type: 'string',
                 default: ''
@@ -54,6 +58,10 @@
                 type: 'string',
                 default: ''
             },
+            link2NewTab: {
+                type: 'boolean',
+                default: true
+            },
             link3Text: {
                 type: 'string',
                 default: ''
@@ -61,6 +69,10 @@
             link3Url: {
                 type: 'string',
                 default: ''
+            },
+            link3NewTab: {
+                type: 'boolean',
+                default: true
             },
             paragraphText: {
                 type: 'string',
@@ -74,6 +86,10 @@
                 type: 'string',
                 default: ''
             },
+            button1NewTab: {
+                type: 'boolean',
+                default: true
+            },
             button2Text: {
                 type: 'string',
                 default: ''
@@ -82,6 +98,10 @@
                 type: 'string',
                 default: ''
             },
+            button2NewTab: {
+                type: 'boolean',
+                default: true
+            },
             button3Text: {
                 type: 'string',
                 default: ''
@@ -89,6 +109,10 @@
             button3Url: {
                 type: 'string',
                 default: ''
+            },
+            button3NewTab: {
+                type: 'boolean',
+                default: true
             }
         },
 
@@ -101,17 +125,23 @@
                 accessGroupIds,
                 link1Text,
                 link1Url,
+                link1NewTab,
                 link2Text,
                 link2Url,
+                link2NewTab,
                 link3Text,
                 link3Url,
+                link3NewTab,
                 paragraphText,
                 button1Text,
                 button1Url,
+                button1NewTab,
                 button2Text,
                 button2Url,
+                button2NewTab,
                 button3Text,
-                button3Url
+                button3Url,
+                button3NewTab
             } = attributes;
             
             // State for preview toggle (unsubscribed vs subscribed view)
@@ -229,6 +259,13 @@
                             value: link1Url,
                             onChange: (value) => setAttributes({ link1Url: value })
                         }),
+                        wp.element.createElement(CheckboxControl, {
+                            label: __('Open Link 1 in new tab', 'content-card-shortcode'),
+                            checked: link1NewTab,
+                            onChange: (value) => setAttributes({ link1NewTab: value }),
+                            help: __('Check to open this link in a new browser tab/window', 'content-card-shortcode')
+                        }),
+                        wp.element.createElement('div', { style: { marginBottom: '16px' } }), // Spacer
                         wp.element.createElement(TextControl, {
                             label: __('Link 2 Text', 'content-card-shortcode'),
                             value: link2Text,
@@ -239,6 +276,13 @@
                             value: link2Url,
                             onChange: (value) => setAttributes({ link2Url: value })
                         }),
+                        wp.element.createElement(CheckboxControl, {
+                            label: __('Open Link 2 in new tab', 'content-card-shortcode'),
+                            checked: link2NewTab,
+                            onChange: (value) => setAttributes({ link2NewTab: value }),
+                            help: __('Check to open this link in a new browser tab/window', 'content-card-shortcode')
+                        }),
+                        wp.element.createElement('div', { style: { marginBottom: '16px' } }), // Spacer
                         wp.element.createElement(TextControl, {
                             label: __('Link 3 Text', 'content-card-shortcode'),
                             value: link3Text,
@@ -248,6 +292,12 @@
                             label: __('Link 3 URL', 'content-card-shortcode'),
                             value: link3Url,
                             onChange: (value) => setAttributes({ link3Url: value })
+                        }),
+                        wp.element.createElement(CheckboxControl, {
+                            label: __('Open Link 3 in new tab', 'content-card-shortcode'),
+                            checked: link3NewTab,
+                            onChange: (value) => setAttributes({ link3NewTab: value }),
+                            help: __('Check to open this link in a new browser tab/window', 'content-card-shortcode')
                         })
                     ),
                     
@@ -300,6 +350,13 @@
                             value: button1Url,
                             onChange: (value) => setAttributes({ button1Url: value })
                         }),
+                        wp.element.createElement(CheckboxControl, {
+                            label: __('Open Button 1 in new tab', 'content-card-shortcode'),
+                            checked: button1NewTab,
+                            onChange: (value) => setAttributes({ button1NewTab: value }),
+                            help: __('Check to open this button link in a new browser tab/window', 'content-card-shortcode')
+                        }),
+                        wp.element.createElement('div', { style: { marginBottom: '16px' } }), // Spacer
                         wp.element.createElement(TextControl, {
                             label: __('Button 2 Text', 'content-card-shortcode'),
                             value: button2Text,
@@ -311,6 +368,13 @@
                             value: button2Url,
                             onChange: (value) => setAttributes({ button2Url: value })
                         }),
+                        wp.element.createElement(CheckboxControl, {
+                            label: __('Open Button 2 in new tab', 'content-card-shortcode'),
+                            checked: button2NewTab,
+                            onChange: (value) => setAttributes({ button2NewTab: value }),
+                            help: __('Check to open this button link in a new browser tab/window', 'content-card-shortcode')
+                        }),
+                        wp.element.createElement('div', { style: { marginBottom: '16px' } }), // Spacer
                         wp.element.createElement(TextControl, {
                             label: __('Button 3 Text', 'content-card-shortcode'),
                             value: button3Text,
@@ -321,6 +385,12 @@
                             label: __('Button 3 URL', 'content-card-shortcode'),
                             value: button3Url,
                             onChange: (value) => setAttributes({ button3Url: value })
+                        }),
+                        wp.element.createElement(CheckboxControl, {
+                            label: __('Open Button 3 in new tab', 'content-card-shortcode'),
+                            checked: button3NewTab,
+                            onChange: (value) => setAttributes({ button3NewTab: value }),
+                            help: __('Check to open this button link in a new browser tab/window', 'content-card-shortcode')
                         })
                     )
                 ),
@@ -778,10 +848,17 @@
             let shortcode = '[content_card';
             
             Object.keys(attributes).forEach(key => {
-                if (attributes[key] && attributes[key] !== '') {
+                if (attributes[key] !== undefined && attributes[key] !== '') {
                     // Convert camelCase to snake_case for shortcode attributes
                     const attrName = key.replace(/([A-Z])/g, '_$1').toLowerCase();
-                    shortcode += ` ${attrName}="${attributes[key]}"`;
+                    
+                    // Convert boolean values to yes/no for shortcode compatibility
+                    let attrValue = attributes[key];
+                    if (typeof attrValue === 'boolean') {
+                        attrValue = attrValue ? 'yes' : 'no';
+                    }
+                    
+                    shortcode += ` ${attrName}="${attrValue}"`;
                 }
             });
             
