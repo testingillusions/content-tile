@@ -3,7 +3,7 @@
  * Plugin Name: Content Card Shortcode
  * Plugin URI: https://example.com/content-card-shortcode
  * Description: A lightweight WordPress plugin that renders customizable content cards with conditional overlay access control using SureMembers integration.
- * Version: 1.0.7
+ * Version: 1.0.8
  * Author: Joe Wood
  * License: GPL v2 or later
  * Text Domain: content-card-shortcode
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
 // Define plugin constants
 define('CONTENT_CARD_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('CONTENT_CARD_PLUGIN_PATH', plugin_dir_path(__FILE__));
-define('CONTENT_CARD_VERSION', '1.0.7');
+define('CONTENT_CARD_VERSION', '1.0.8');
 
 // Include required files
 require_once CONTENT_CARD_PLUGIN_PATH . 'includes/class-content-card.php';
@@ -38,6 +38,27 @@ function content_card_init() {
     }
 }
 add_action('plugins_loaded', 'content_card_init');
+
+/**
+ * Send no-cache headers on any front-end page that contains a content_card
+ * shortcode with access_group_ids. This prevents the browser from serving
+ * a stale 304 "not modified" cached response after a lightbox login.
+ */
+function content_card_nocache_headers() {
+    if (is_admin() || !is_singular()) {
+        return;
+    }
+    global $post;
+    if (!$post || !has_shortcode($post->post_content, 'content_card')) {
+        return;
+    }
+    // Only no-cache pages that actually have access-restricted tiles
+    if (strpos($post->post_content, 'access_group_ids') === false) {
+        return;
+    }
+    nocache_headers();
+}
+add_action('send_headers', 'content_card_nocache_headers');
 
 /**
  * Activation hook
