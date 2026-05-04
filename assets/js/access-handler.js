@@ -12,11 +12,12 @@
     let lastCheckTime = 0;
     let initComplete = false;
     let loginPollInterval = null;
+    let reloadScheduled = false;
     
     /**
      * Return true if the WordPress logged-in cookie is present.
-     * This cookie is readable by JS (not HttpOnly) and is set as soon as
-     * WordPress completes authentication — including lightbox/AJAX logins.
+     * This cookie is NOT HttpOnly — WordPress intentionally leaves it
+     * readable by JS for client-side login-state detection.
      */
     function hasWpLoginCookie() {
         return document.cookie.split(';').some(function(c) {
@@ -25,39 +26,25 @@
     }
     
     /**
-     * Start polling for the WP login cookie every 2 seconds.
-     * Used when the page rendered without a logged-in user but there are
-     * locked tiles — e.g. the user is about to log in via a lightbox dialog.
-     * Stops automatically once login is detected or after 10 minutes.
+     * Reload the page once. Guards against double-fires from concurrent
+     * ajaxSuccess events and the polling fallback both triggering.
      */
-    function startLoginCookiePolling() {
+    function scheduleReload() {
+        if (reloadScheduled) return;
+        reloadScheduled = true;
         if (loginPollInterval) {
-            return; // already polling
+            clearInterval(loginPollInterval);
+            loginPollInterval = null;
         }
-        
-        const pollStart = Date.now();
-        const MAX_POLL_MS = 10 * 60 * 1000; // 10 minutes
-        
-        loginPollInterval = setInterval(function() {
-            // Stop after 10 minutes
-            if (Date.now() - pollStart > MAX_POLL_MS) {
-                clearInterval(loginPollInterval);
-                loginPollInterval = null;
-                return;
-            }
-            
-            if (hasWpLoginCookie()) {
-                console.log('Content Card: Login cookie detected, refreshing access...');
-                clearInterval(loginPollInterval);
-                loginPollInterval = null;
-                lastLoginState = true;
-                refreshAllCardAccess();
-            }
-        }, 2000);
+        console.log('Content Card: Login detected, reloading page...');
+        setTimeout(function() {
+            window.location.reload();
+        }, 300);
     }
-    
+
     /**
-     * Check if access state has changed and refresh cards if needed
+     * Check if access state has changed and refresh cards if needed.
+     * Only used for the "already logged in but SureMembers race" case.
      */
     function checkAccessStateChange() {
         // Skip if already checking or too soon since last check
@@ -71,12 +58,9 @@
             return;
         }
         
-        // Treat cookie presence as authoritative — covers lightbox logins where
-        // the body class and contentCardAjax.isLoggedIn never change post-load.
         const currentLoginState = hasWpLoginCookie() || document.body.classList.contains('logged-in');
         const currentUserId = contentCardAjax.userId;
         
-        // Only trigger if there's an actual state change
         if (currentLoginState !== lastLoginState || currentUserId !== lastUserId) {
             console.log('Content Card: Login state changed, refreshing access...');
             refreshAllCardAccess();
@@ -194,12 +178,37 @@
                 setTimeout(refreshAllCardAccess, 1500);
             }
         } else {
-            // User is not logged in. If there are locked tiles on this page,
-            // poll for the WordPress login cookie so we can detect a lightbox
-            // login without a page reload and immediately refresh the tiles.
+            // User is not logged in. Watch for a lightbox (e.g. UsersWP/UWP) login.
+            //
+            // Strategy: intercept jQuery's ajaxSuccess — fired immediately after the
+            // browser applies the Set-Cookie headers from UWP's login AJAX response.
+            // At that point hasWpLoginCookie() transitions from false → true.
+            // We reload the whole page so PHP re-renders the tiles with correct access.
+            //
+            // The nonce in contentCardAjax was generated for a logged-out user so we
+            // intentionally skip the AJAX re-check here and go straight to reload.
             var lockedCards = $('.content-card-container[data-access-groups][data-has-access="0"]');
             if (lockedCards.length > 0) {
-                startLoginCookiePolling();
+                // Primary: react the instant UWP's AJAX login response is processed.
+                $(document).ajaxSuccess(function() {
+                    if (!reloadScheduled && hasWpLoginCookie()) {
+                        scheduleReload();
+                    }
+                });
+                
+                // Fallback: poll every second in case the login came from a non-jQuery
+                // request (fetch API, form POST in iframe, etc.).
+                var pollStart = Date.now();
+                loginPollInterval = setInterval(function() {
+                    if (Date.now() - pollStart > 10 * 60 * 1000) {
+                        clearInterval(loginPollInterval);
+                        loginPollInterval = null;
+                        return;
+                    }
+                    if (!reloadScheduled && hasWpLoginCookie()) {
+                        scheduleReload();
+                    }
+                }, 1000);
             }
         }
         
