@@ -28,6 +28,11 @@
     /**
      * Reload the page once. Guards against double-fires from concurrent
      * ajaxSuccess events and the polling fallback both triggering.
+     *
+     * Uses fetch({ cache: 'reload' }) first to force the browser to send
+     * Cache-Control: no-cache and get a fresh 200 from the server, updating
+     * the cached entry. This prevents a 304 "not modified" response serving
+     * the stale logged-out page when window.location.reload() fires.
      */
     function scheduleReload() {
         if (reloadScheduled) return;
@@ -36,9 +41,11 @@
             clearInterval(loginPollInterval);
             loginPollInterval = null;
         }
-        console.log('Content Card: Login detected, reloading page...');
+        console.log('Content Card: Login detected, bypassing cache and reloading page...');
         setTimeout(function() {
-            window.location.reload();
+            fetch(window.location.href, { cache: 'reload', credentials: 'same-origin' })
+                .then(function() { window.location.reload(); })
+                .catch(function() { window.location.reload(); });
         }, 300);
     }
 

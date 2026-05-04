@@ -40,6 +40,27 @@ function content_card_init() {
 add_action('plugins_loaded', 'content_card_init');
 
 /**
+ * Send no-cache headers on any front-end page that contains a content_card
+ * shortcode with access_group_ids. This prevents the browser from serving
+ * a stale 304 "not modified" cached response after a lightbox login.
+ */
+function content_card_nocache_headers() {
+    if (is_admin() || !is_singular()) {
+        return;
+    }
+    global $post;
+    if (!$post || !has_shortcode($post->post_content, 'content_card')) {
+        return;
+    }
+    // Only no-cache pages that actually have access-restricted tiles
+    if (strpos($post->post_content, 'access_group_ids') === false) {
+        return;
+    }
+    nocache_headers();
+}
+add_action('send_headers', 'content_card_nocache_headers');
+
+/**
  * Activation hook
  */
 function content_card_activate() {
