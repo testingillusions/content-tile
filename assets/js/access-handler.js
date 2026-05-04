@@ -139,6 +139,17 @@
         
         initComplete = true;
         
+        // On page load, if the user is already logged in and any cards are showing
+        // as locked, do an immediate recheck. This fixes the race condition where
+        // SureMembers hasn't fully loaded group memberships on the first page render
+        // after login (e.g. after a password reset redirect).
+        if (contentCardAjax.isLoggedIn) {
+            var lockedCards = $('.content-card-container[data-access-groups][data-has-access="0"]');
+            if (lockedCards.length > 0) {
+                setTimeout(refreshAllCardAccess, 1500);
+            }
+        }
+        
         // Only check for access state changes every 30 seconds (much less frequent)
         setInterval(checkAccessStateChange, 30000);
         

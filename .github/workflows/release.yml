@@ -1,0 +1,26 @@
+name: Release Plugin
+
+on:
+  push:
+    tags: ['[0-9]*']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build zip with correct folder name
+        run: |
+          PLUGIN_SLUG="content-card-shortcode"   # must match the installed folder name
+          mkdir -p build/$PLUGIN_SLUG
+          rsync -av --exclude='.git' --exclude='.github' --exclude='build' \
+            . build/$PLUGIN_SLUG/
+          cd build && zip -r ../$PLUGIN_SLUG.zip $PLUGIN_SLUG/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: content-card-shortcode.zip   # version-free name

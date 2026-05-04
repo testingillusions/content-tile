@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
 // Define plugin constants
 define('CONTENT_CARD_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('CONTENT_CARD_PLUGIN_PATH', plugin_dir_path(__FILE__));
-define('CONTENT_CARD_VERSION', '1.0.0');
+define('CONTENT_CARD_VERSION', '1.0.3');
 
 // Include required files
 require_once CONTENT_CARD_PLUGIN_PATH . 'includes/class-content-card.php';
@@ -167,6 +167,15 @@ function content_card_refresh_access() {
     if (empty($group_ids)) {
         wp_send_json_success(array('has_access' => true));
         return;
+    }
+    
+    // Clear any cached access result for this user+group combination so this
+    // AJAX check always reflects the current SureMembers state (prevents stale
+    // "no access" entries written during the initial post-login page render).
+    $user_id = get_current_user_id();
+    if ($user_id) {
+        $cache_key = 'content_card_access_' . $user_id . '_' . md5($group_ids);
+        wp_cache_delete($cache_key, 'content_card_access');
     }
     
     // Create temporary content card instance to check access
