@@ -1,4 +1,4 @@
-.\.github\skills\bump-and-release\scripts\bump-and-release.ps1 -SkipBump.\.github\skills\bump-and-release\scripts\bump-and-release.ps1 -SkipBumpname: Release Plugin
+name: Release Plugin
 
 on:
   push:
