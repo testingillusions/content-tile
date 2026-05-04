@@ -11,6 +11,50 @@
     let lastUserId = contentCardAjax.userId;
     let lastCheckTime = 0;
     let initComplete = false;
+    let loginPollInterval = null;
+    
+    /**
+     * Return true if the WordPress logged-in cookie is present.
+     * This cookie is readable by JS (not HttpOnly) and is set as soon as
+     * WordPress completes authentication — including lightbox/AJAX logins.
+     */
+    function hasWpLoginCookie() {
+        return document.cookie.split(';').some(function(c) {
+            return c.trim().indexOf('wordpress_logged_in_') === 0;
+        });
+    }
+    
+    /**
+     * Start polling for the WP login cookie every 2 seconds.
+     * Used when the page rendered without a logged-in user but there are
+     * locked tiles — e.g. the user is about to log in via a lightbox dialog.
+     * Stops automatically once login is detected or after 10 minutes.
+     */
+    function startLoginCookiePolling() {
+        if (loginPollInterval) {
+            return; // already polling
+        }
+        
+        const pollStart = Date.now();
+        const MAX_POLL_MS = 10 * 60 * 1000; // 10 minutes
+        
+        loginPollInterval = setInterval(function() {
+            // Stop after 10 minutes
+            if (Date.now() - pollStart > MAX_POLL_MS) {
+                clearInterval(loginPollInterval);
+                loginPollInterval = null;
+                return;
+            }
+            
+            if (hasWpLoginCookie()) {
+                console.log('Content Card: Login cookie detected, refreshing access...');
+                clearInterval(loginPollInterval);
+                loginPollInterval = null;
+                lastLoginState = true;
+                refreshAllCardAccess();
+            }
+        }, 2000);
+    }
     
     /**
      * Check if access state has changed and refresh cards if needed
@@ -27,8 +71,9 @@
             return;
         }
         
-        // Check if login state changed
-        const currentLoginState = document.body.classList.contains('logged-in');
+        // Treat cookie presence as authoritative — covers lightbox logins where
+        // the body class and contentCardAjax.isLoggedIn never change post-load.
+        const currentLoginState = hasWpLoginCookie() || document.body.classList.contains('logged-in');
         const currentUserId = contentCardAjax.userId;
         
         // Only trigger if there's an actual state change
@@ -147,6 +192,14 @@
             var lockedCards = $('.content-card-container[data-access-groups][data-has-access="0"]');
             if (lockedCards.length > 0) {
                 setTimeout(refreshAllCardAccess, 1500);
+            }
+        } else {
+            // User is not logged in. If there are locked tiles on this page,
+            // poll for the WordPress login cookie so we can detect a lightbox
+            // login without a page reload and immediately refresh the tiles.
+            var lockedCards = $('.content-card-container[data-access-groups][data-has-access="0"]');
+            if (lockedCards.length > 0) {
+                startLoginCookiePolling();
             }
         }
         
